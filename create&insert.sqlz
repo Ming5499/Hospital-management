@@ -439,11 +439,37 @@ CREATE TABLE `xetnghiem` (
 -- Dumping data for table `xetnghiem`
 --
 
+
 LOCK TABLES `xetnghiem` WRITE;
 /*!40000 ALTER TABLE `xetnghiem` DISABLE KEYS */;
 INSERT INTO `xetnghiem` VALUES (1,'Glucose','mmol/L',15000),(2,'Ure','mmol/L',10000),(3,'HDL-C','mmol/L',25000),(4,'LDL-C','mmol/L',30000),(5,'Creamin','gmol/L',12000),(6,'Albumin','mmol/L',20000),(7,'Melamin','gmol/L',17000);
 /*!40000 ALTER TABLE `xetnghiem` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+--Create Index
+--
+
+CREATE INDEX idx_benhnhan_mabn ON benhnhan(mabn);
+CREATE INDEX idx_benhnhan_ngaysinh ON benhnhan(ngaysinh);
+CREATE INDEX idx_benhnhan_ngaytiepnhan ON benhnhan(ngaytiepnhan);
+CREATE INDEX idx_benhnhan_makhoa ON benhnhan(makhoa);
+CREATE INDEX idx_benhnhan_gioitinh ON benhnhan(gioitinh);
+
+CREATE INDEX idx_nhanvien_manv ON nhanvien(manv);
+CREATE INDEX idx_nhanvien_makhoa ON nhanvien(makhoa);
+
+CREATE INDEX idx_phieukhambenh_mabn ON phieukhambenh(mabn);
+CREATE INDEX idx_phieukhambenh_manv ON phieukhambenh(manv);
+
+CREATE INDEX idx_phieuxetnghiem_mabn ON phieuxetnghiem(mabn);
+CREATE INDEX idx_phieuxetnghiem_manv ON phieuxetnghiem(manv);
+
+CREATE INDEX idx_mabn_dt ON donthuoc (mabn);
+CREATE INDEX idx_mathuoc_dt ON donthuoc (maThuoc);
+
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
