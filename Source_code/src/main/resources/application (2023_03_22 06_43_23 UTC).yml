@@ -1,0 +1,19 @@
+server:
+    port: 8080
+
+spring:
+    datasource:
+        url: jdbc:mysql://localhost:3306/benhvien
+        username: root
+        password: 123456789
+
+    thymeleaf:
+        cache: false
+        prefix: file:src/main/resources/templates/
+
+    jpa:
+        hibernate:
+            ddl-auto: none
+
+
+
