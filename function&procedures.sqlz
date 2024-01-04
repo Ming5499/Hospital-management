@@ -1,0 +1,155 @@
+#Function to Calculate Patient Age
+DELIMITER //
+
+CREATE FUNCTION CalculateTotalMedicationCost(patientID INT)
+RETURNS FLOAT
+BEGIN
+    DECLARE totalCost FLOAT;
+    SELECT SUM(t.donGia * d.soluong) INTO totalCost
+    FROM donthuoc d
+    JOIN thuoc t ON d.maThuoc = t.maThuoc
+    WHERE d.mabn = patientID;
+    RETURN totalCost;
+END //
+
+DELIMITER ;
+
+
+#Function to Calculate Total Cost of Medication for a Patient
+DELIMITER //
+
+CREATE PROCEDURE AddPrescription(
+    IN patientID INT,
+    IN prescriptionDate DATE,
+    IN medicineName VARCHAR(50),
+    IN quantity INT,
+    IN pricePerUnit FLOAT
+)
+BEGIN
+    DECLARE medicineID INT;
+    SELECT maThuoc INTO medicineID FROM thuoc WHERE tenThuoc = medicineName;
+    
+    IF medicineID IS NOT NULL THEN
+        INSERT INTO donthuoc (thoigian, mabn, maThuoc, soluong, tien)
+        VALUES (prescriptionDate, patientID, medicineID, quantity, quantity * pricePerUnit);
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Medicine not found';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+#Function to Retrieve Patient's Next Appointment Date
+DELIMITER //
+
+CREATE FUNCTION GetNextAppointmentDate(patientID INT)
+RETURNS DATE
+BEGIN
+    DECLARE nextAppointmentDate DATE;
+    SELECT MIN(ngaytaikham) INTO nextAppointmentDate
+    FROM phieukhambenh
+    WHERE mabn = patientID AND ngaytaikham > CURDATE();
+    RETURN nextAppointmentDate;
+END //
+
+DELIMITER ;
+
+
+#Stored Procedure to Get Patient Details
+DELIMITER //
+
+CREATE PROCEDURE GetPatientDetails(IN patientID INT)
+BEGIN
+    SELECT * FROM benhnhan WHERE mabn = patientID;
+END //
+
+DELIMITER ;
+
+#Stored Procedure to Update Patient Details
+DELIMITER //
+
+CREATE PROCEDURE UpdatePatientDetails(
+    IN patientID INT,
+    IN newFullName VARCHAR(50),
+    IN newPhone VARCHAR(12),
+    IN newAddress VARCHAR(50)
+)
+BEGIN
+    UPDATE benhnhan
+    SET hoten = newFullName, sodienthoai = newPhone, diachi = newAddress
+    WHERE mabn = patientID;
+END //
+
+DELIMITER ;
+
+
+#Stored Procedure to Add a New Prescription
+DELIMITER //
+
+CREATE PROCEDURE AddPrescription(
+    IN patientID INT,
+    IN prescriptionDate DATE,
+    IN medicineName VARCHAR(50),
+    IN quantity INT,
+    IN pricePerUnit FLOAT
+)
+BEGIN
+    DECLARE medicineID INT;
+    SELECT maThuoc INTO medicineID FROM thuoc WHERE tenThuoc = medicineName;
+    
+    IF medicineID IS NOT NULL THEN
+        INSERT INTO donthuoc (thoigian, mabn, maThuoc, soluong, tien)
+        VALUES (prescriptionDate, patientID, medicineID, quantity, quantity * pricePerUnit);
+    ELSE
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Khong tim thay thuoc';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+#Stored Procedure to Get Patient Prescriptions
+DELIMITER //
+
+CREATE PROCEDURE GetPatientPrescriptions(IN patientID INT)
+BEGIN
+    SELECT d.*, t.tenThuoc
+    FROM donthuoc d
+    JOIN thuoc t ON d.maThuoc = t.maThuoc
+    WHERE d.mabn = patientID;
+END //
+
+DELIMITER ;
+
+
+#Stored Procedure to Delete a Prescription
+DELIMITER //
+
+CREATE PROCEDURE DeletePrescription(IN prescriptionID INT)
+BEGIN
+    DELETE FROM donthuoc WHERE id = prescriptionID;
+END //
+
+DELIMITER ;
+
+
+#Stored Procedure to Update Patient's Address
+DELIMITER //
+
+CREATE PROCEDURE UpdatePatientAddress(
+    IN patientID INT,
+    IN newAddress VARCHAR(100)
+)
+BEGIN
+    UPDATE benhnhan
+    SET diachi = newAddress
+    WHERE mabn = patientID;
+END //
+
+DELIMITER ;
+
+
+
+
+
